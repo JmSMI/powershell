@@ -1,0 +1,7 @@
+https://docs.microsoft.com/en-us/powershell/exchange/mfa-connect-to-exchange-online-powershell?view=exchange-ps
+
+If you need to connect to Exchange Online powershell but have MFA enforced you must use the connect-exopsession cmdlet
+
+1 - Download the module from Exchange Admin Center
+2 - Launch the module from the start menu
+3 - Use Connect-ExopSession to connect to Exchange Online
