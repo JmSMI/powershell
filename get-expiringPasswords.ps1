@@ -25,7 +25,7 @@
 Import-Module ActiveDirectory
  
 #Set the number of days within expiration.  This will start to send the email x number of days before it is expired.
-$DaysWithinExpiration = 10
+$DaysWithinExpiration = 30
  
 #Set the days where the password is already expired and needs to change. -- Do Not Modify --
 $MaxPwdAge   = (Get-ADDefaultDomainPasswordPolicy).MaxPasswordAge.Days
