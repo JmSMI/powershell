@@ -1,0 +1,293 @@
+<#This script will copy the following folders to the Desktop
+-Downloads
+-Outlook signatures in Appdata
+-Chrome bookmarks in Appdata
+
+Requirements before running this:
+-OneDrive backup must be on/enabled, at least for Desktop folder
+
+This script will also run autopilot .ps1 and copy the HWID.csv to the desktop.
+Date: July 2021
+Author: James Moffat
+#>
+
+
+#variables
+$signaturePath               = $env:USERPROFILE + "\AppData\Roaming\Microsoft\Signatures"
+$signatureDestination        = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Signatures"
+$downloadsPath               = $env:USERPROFILE + "\Downloads"
+$downloadsDestination        = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Downloads"
+$chromeBookmarksPath         = $env:USERPROFILE + "\AppData\Local\Google\Chrome\User Data\Default\Bookmarks"
+$chromeBookmarksDestination  = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks"
+$contactString               = "
+How to contact IT after the reset is complete:
+       1. use teams on your phone to message or call me
+       2. email itsupport@davidsuzuki.org
+       3. call me: 604 213 2744
+
+
+Reset will take a while... When it's complete the laptop will
+reboot and present a factory default start screen. Please proceed through
+the setup:
+
+    1. Leave default settings..
+    2. Connect to wifi/ethernet
+    3. Sign in as <yourID@davidsuzuki.org>/<yourPassword>
+    4. Once signed into the device and at the normal Desktop screen, contact IT
+       "
+
+#Copy Outlook signatures to desktop
+Write-Host "Copying Outlook signatures..."
+if(-not (Test-Path -Path $signatureDestination))
+{
+    Copy-Item -Path $signaturePath -Recurse -Destination $signatureDestination
+
+    if(Test-Path -Path $signatureDestination)
+    { 
+        Write-Host "Copied signatures to desktop\signatures..." 
+    }
+} else
+{
+    New-Item -ItemType Directory -Path ($signatureDestination + "_Outlook") -Force | Out-Null
+    Get-ChildItem -Path $signaturePath -Recurse | Copy-Item -Destination ($signatureDestination + "_Outlook") -Force
+    write-Host "Copied signatures to desktop\signatures_Outlook.."
+}
+
+#Copy downloads folder to desktop
+Write-Host "Copying downloads folder..."
+if(-not (Test-Path -Path $downloadsDestination))
+{
+    Copy-Item -Recurse -Path $downloadsPath -Destination $downloadsDestination
+    if(Test-Path -Path $downloadsDestination)
+    {
+         Write-Host "Copied downloads to desktop\downloads..." 
+    }
+} else
+{
+    New-Item -ItemType Directory -Path ($downloadsDestination + "_Copy") -Force | Out-Null
+    Get-ChildItem -Path $downloadsPath -Recurse | Copy-Item -Destination ($downloadsDestination + "_Copy") -Force
+    write-Host "Copied downloads to desktop\downloads_copy.."
+}
+
+#Copy Chrome bookmarks to desktop
+Write-Host "Copying chrome bookmarks..."
+if(-not (Test-Path -Path $chromeBookmarksDestination))
+{
+    New-Item -ItemType Directory -Path $chromeBookmarksDestination | Out-Null
+    Copy-Item -Path $chromeBookmarksPath -Destination $chromeBookmarksDestination
+    if(Test-Path -Path $chromeBookmarksDestination)
+    { 
+        Write-Host "Copied Chrome bookmarks to desktop\chrome bookmarks..." 
+    }
+} else
+{
+    New-Item -ItemType Directory -Path ($chromeBookmarksDestination + "_Copy") -Force | Out-Null
+    Get-ChildItem -Path $chromeBookmarksPath | Copy-Item -Destination ($chromeBookmarksDestination + "_Copy") -Force
+    write-Host "Copied Chrome bookmarks to desktop\chrome bookmarks_copy.."
+}
+
+#Run autopilot script
+if(-not (Test-Path -Path C:\HWID))
+{
+    New-Item -Type Directory -Path "C:\HWID" | Out-Null
+}
+Set-Location -Path "C:\HWID"
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted
+Install-Script -Name Get-WindowsAutoPilotInfo
+Get-WindowsAutoPilotInfo.ps1 -OutputFile AutoPilotHWID.csv
+
+$hwidDestination = ($env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\HWID")
+#Copy directory
+if(-not (Test-Path $hwidDestination))
+{
+    Copy-Item -Path C:\HWID -Recurse -Destination $hwidDestination
+}
+Write-Host "Copied HWID to desktop\hwid...."
+
+Set-Location -Path ($env:HOMEPATH + "\OneDrive - David Suzuki Foundation\Desktop")
+
+Write-Host -BackgroundColor White -foregroundcolor blue $contactString
+
+#Second script to be used after reset
+<#
+TODO
+    if downloads size is ok, delete old folder on desktop. Same with bookmarks and signature
+
+#>
+
+$signaturesTransferred      = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Signatures"
+$signaturesTransferredCopy  = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Signatures_Outlook"
+$signatureDestination       = $env:USERPROFILE + "\AppData" + "\Roaming\Microsoft\Signatures"
+
+$downloadsTransferred = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Downloads"
+$downloadsTransferredCopy = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Downloads_Copy"
+$downloadsDestination = $env:USERPROFILE + "\Downloads"
+
+$chrome = $env:USERPROFILE + "\AppData" + "\Local\Google\Chrome\"
+$chromeBookmarks = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks\Bookmarks"
+$chromeBookmarksCopy = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks_Copy\Bookmarks" 
+$chromeBookmarksDestination = $env:USERPROFILE + "\AppData" + "\Local\Google\Chrome\User Data\Default\Bookmarks"
+
+$HWIDfolder = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\HWID"
+
+if(-not(Test-Path $chrome))
+{
+    Write-Host "Missing Google Chrome"
+    exit
+} elseif(-not(Test-Path $signatureDestination))
+{
+    Write-Host "Missing Outlook"
+    exit
+} else
+{
+    #Check for updates
+    (New-Object -ComObject Microsoft.Update.AutoUpdate).DetectNow()
+
+    #copy Bookmarks
+    Write-Host "Transferring bookmarks"
+    if(Test-Path $chromeBookmarksCopy)
+    {
+        Copy-Item -Path $chromeBookmarksCopy -Destination $chromeBookmarksDestination
+    } else
+    {
+        Copy-Item -Path $chromeBookmarks -Destination $chromeBookmarksDestination
+    }
+    Write-Host "done..."
+
+    #copy Signatures
+    Write-Host "Transferring signatures"
+    if(Test-Path $signaturesTransferredCopy)
+    {
+        Get-ChildItem -path $signaturesTransferredCopy -recurse | Copy-Item -Destination $signatureDestination -force
+        Write-Host "done..."
+    } else
+    {
+        Get-ChildItem -path $signaturesTransferred -recurse | Copy-Item -Destination $signatureDestination -force
+        Write-Host "done..."
+    }
+
+    #copy downloads
+    Write-Host "Transferring downloads"
+    if(Test-Path $downloadsTransferredCopy)
+    {
+        Get-ChildItem -path $downloadsTransferredCopy -recurse | Copy-Item -Destination $downloadsDestination
+        Write-Host "done..."
+    } else
+    {
+        Get-ChildItem -path $downloadsTransferred -recurse | Copy-Item -Destination $downloadsDestination
+        Write-Host "done..."
+    }
+}
+
+Write-Host "Cleaning up..."
+#Clean up downloads
+$downloadsCopySize  = 0
+$downloadsLocalSize = 0
+
+Get-ChildItem -Recurse -Path $downloadsDestination | ForEach-Object {
+    $downloadsLocalSize += $_.length
+}
+
+if(Test-Path $downloadsTransferredCopy)
+{
+    Get-ChildItem -Recurse -Path $downloadsTransferredCopy | ForEach-Object {
+        $downloadsCopySize += $_.length
+    } 
+} else
+{
+    Get-ChildItem -Path $downloadsTransferred -Recurse | ForEach-Object {
+        $downloadsCopySize += $_.length
+    }
+}
+
+#Delete the copy
+if($downloadsLocalSize -ge -$downloadsCopySize)
+{
+    if(Test-Path $downloadsTransferredCopy)
+    {
+    (Get-ChildItem -path $downloadsTransferredCopy -recurse).Delete()
+    (Get-Item -path $downloadsTransferredCopy).Delete()
+    Write-Host "Cleaned downloads copy"
+    } else
+    {
+    (Get-ChildItem -path $downloadsTransferred -recurse).Delete()
+    (Get-Item -path $downloadsTransferred).Delete()
+    Write-Host "Cleaned downloads"
+    }
+}
+
+#Clean up bookmarks
+$bookmarksCopySize  = 0
+$bookmarksLocalSize = 0
+
+Get-ChildItem -Recurse -Path $chromeBookmarksDestination | ForEach-Object {
+    $bookmarksLocalSize += $_.length
+}
+
+if(Test-Path $chromeBookmarksCopy)
+{
+    Get-ChildItem -Recurse -Path $chromeBookmarksCopy | ForEach-Object {
+        $bookmarksCopySize += $_.length
+    } 
+} else
+{
+    Get-ChildItem -Path $chromeBookmarks -Recurse | ForEach-Object {
+        $bookmarksCopySize += $_.length
+    }
+}
+
+#Delete the copy
+if($bookmarksLocalSize -ge -$bookmarksCopySize)
+{
+    if(Test-Path $chromeBookmarksCopy)
+    {
+    (Get-ChildItem -path $chromeBookmarksCopy -recurse).Delete()
+    (Get-Item -path ($env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks_Copy")).Delete()
+    Write-Host "Cleaned bookmarks copy"
+    } else
+    {
+    (Get-ChildItem -path $chromeBookmarks -recurse).Delete()
+    (Get-Item -path ($env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks")).Delete()
+    Write-Host "Cleaned bookmarks"
+    }
+}
+
+#Clean up signatures
+$signatureCopySize  = 0
+$signatureLocalSize = 0
+
+Get-ChildItem -Recurse -Path $signatureDestination | ForEach-Object {
+    $signatureLocalSize += $_.length
+}
+
+if(Test-Path $signaturesTransferredCopy)
+{
+    Get-ChildItem -Recurse -Path $signaturesTransferredCopy | ForEach-Object {
+        $signatureCopySize += $_.length
+    } 
+} else
+{
+    Get-ChildItem -Path $signaturesTransferred -Recurse | ForEach-Object {
+        $signatureCopySize += $_.length
+    }
+}
+
+#Delete the copy
+if($signatureLocalSize -ge -$signatureCopySize)
+{
+    if(Test-Path $signaturesTransferredCopy)
+    {
+    (Get-ChildItem -path $signaturesTransferredCopy -recurse).Delete()
+    (Get-Item -path $signaturesTransferredCopy).Delete()
+    Write-Host "Cleaned signatures copy"
+    } else
+    {
+    (Get-ChildItem -path $signaturesTransferred -recurse).Delete()
+    (Get-Item -path $signaturesTransferred).Delete()
+    Write-Host "Cleaned signatures"
+    }
+}
+
+#Delete HWID folder on desktop
+(Get-ChildItem -path $HWIDfolder -recurse).Delete()
+(get-Item -path $HWIDfolder).Delete()
