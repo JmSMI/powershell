@@ -18,10 +18,10 @@ workflow Rename-And-Reboot {
 }
 
 
-# After a reboot, the computer is joined to the kits.davidsuzuki.org domain
+# After a reboot, the computer is joined to the domain
 
 Read-Host -Prompt "Enter admin username" -Outvariable username | Out-Null
 
 $cred = Get-Credential -credential "$username"
 
-Add-Computer -domainName kits.davidsuzuki.org -Credential $cred -PassThru -Verbose -Restart
+Add-Computer -domainName $domain -Credential $cred -PassThru -Verbose -Restart
