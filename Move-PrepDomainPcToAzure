@@ -21,9 +21,9 @@ $chromeBookmarksPath         = $env:USERPROFILE + "\AppData\Local\Google\Chrome\
 $chromeBookmarksDestination  = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks"
 $contactString               = "
 How to contact IT after the reset is complete:
-       1. use teams on your phone to message or call me
-       2. email itsupport@davidsuzuki.org
-       3. call me: 604 213 2744
+       1. use teams
+       2. email us
+       3. call me
 
 
 Reset will take a while... When it's complete the laptop will
@@ -32,7 +32,7 @@ the setup:
 
     1. Leave default settings..
     2. Connect to wifi/ethernet
-    3. Sign in as <yourID@davidsuzuki.org>/<yourPassword>
+    3. Sign in as <yourID@contoso.org>/<yourPassword>
     4. Once signed into the device and at the normal Desktop screen, contact IT
        "
 
