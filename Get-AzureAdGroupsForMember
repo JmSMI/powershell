@@ -1,9 +1,21 @@
-$user = <userPrincipalName>
-$items | ForEach-Object {
-    $group = $_
-    Get-AzureADGroupMember -ObjectId $group.ObjectId | ForEach-Object {
-        if ($_.UserPrincipalName -eq $user) {
-            Write-Output $group.DisplayName
+function Get-AzureADGroupsForMember {
+    param(
+        [string]$UPN,
+        [string]$ExportPath
+    )
+
+    $results = @()
+
+    $items | ForEach-Object {
+        $group = $_
+        Get-AzureADGroupMember -ObjectId $group.ObjectId | ForEach-Object {
+            if ($_.UserPrincipalName -eq $UPN) {
+                $results += [PSCustomObject]@{
+                    GroupDisplayName = $group.DisplayName
+                }
+            }
         }
     }
-} | Export-Csv -NoTypeInformation -Path .\azureAdGroupsForMember.csv
+
+    $results | Export-Csv -Path $OutputFilePath -NoTypeInformation
+}
