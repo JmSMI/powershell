@@ -1,0 +1,9 @@
+$user = <userPrincipalName>
+$items | ForEach-Object {
+    $group = $_
+    Get-AzureADGroupMember -ObjectId $group.ObjectId | ForEach-Object {
+        if ($_.UserPrincipalName -eq $user) {
+            Write-Output $group.DisplayName
+        }
+    }
+} | Export-Csv -NoTypeInformation -Path .\azureAdGroupsForMember.csv
