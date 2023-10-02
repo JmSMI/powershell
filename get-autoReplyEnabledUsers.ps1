@@ -6,7 +6,10 @@ Version 1.0
 
 Requirements: Connect to Exchange Online Module for Office365
 #>
-get-user | Where-Object {($_.company -eq "David Suzuki Foundation")} | 
+
+# Replace <Company> with relevant string
+
+get-user | Where-Object {($_.company -eq <Company>)} | 
 Get-MailboxAutoReplyConfiguration | 
 Where-Object {($_.Autoreplystate -eq "enabled") -or ($_.Autoreplystate -eq "scheduled")}  | 
 Sort-Object -Property identity | Select-Object identity
