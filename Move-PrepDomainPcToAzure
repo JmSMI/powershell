@@ -14,11 +14,11 @@ Author: James Moffat
 
 #variables
 $signaturePath               = $env:USERPROFILE + "\AppData\Roaming\Microsoft\Signatures"
-$signatureDestination        = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Signatures"
+$signatureDestination        = $env:USERPROFILE + "\OneDrive\Desktop\Signatures"
 $downloadsPath               = $env:USERPROFILE + "\Downloads"
-$downloadsDestination        = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Downloads"
+$downloadsDestination        = $env:USERPROFILE + "\OneDrive\Desktop\Downloads"
 $chromeBookmarksPath         = $env:USERPROFILE + "\AppData\Local\Google\Chrome\User Data\Default\Bookmarks"
-$chromeBookmarksDestination  = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks"
+$chromeBookmarksDestination  = $env:USERPROFILE + "\OneDrive\Desktop\Chrome bookmarks"
 $contactString               = "
 How to contact IT after the reset is complete:
        1. use teams
@@ -96,7 +96,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted
 Install-Script -Name Get-WindowsAutoPilotInfo
 Get-WindowsAutoPilotInfo.ps1 -OutputFile AutoPilotHWID.csv
 
-$hwidDestination = ($env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\HWID")
+$hwidDestination = ($env:USERPROFILE + "\OneDrive\Desktop\HWID")
 #Copy directory
 if(-not (Test-Path $hwidDestination))
 {
@@ -104,7 +104,7 @@ if(-not (Test-Path $hwidDestination))
 }
 Write-Host "Copied HWID to desktop\hwid...."
 
-Set-Location -Path ($env:HOMEPATH + "\OneDrive - David Suzuki Foundation\Desktop")
+Set-Location -Path ($env:HOMEPATH + "\OneDrive\Desktop")
 
 Write-Host -BackgroundColor White -foregroundcolor blue $contactString
 
@@ -115,20 +115,20 @@ TODO
 
 #>
 
-$signaturesTransferred      = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Signatures"
-$signaturesTransferredCopy  = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Signatures_Outlook"
+$signaturesTransferred      = $env:USERPROFILE + "\OneDrive\Desktop\Signatures"
+$signaturesTransferredCopy  = $env:USERPROFILE + "\OneDrive\Desktop\Signatures_Outlook"
 $signatureDestination       = $env:USERPROFILE + "\AppData" + "\Roaming\Microsoft\Signatures"
 
-$downloadsTransferred = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Downloads"
-$downloadsTransferredCopy = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Downloads_Copy"
+$downloadsTransferred = $env:USERPROFILE + "\OneDrive\Desktop\Downloads"
+$downloadsTransferredCopy = $env:USERPROFILE + "\OneDrive\Desktop\Downloads_Copy"
 $downloadsDestination = $env:USERPROFILE + "\Downloads"
 
 $chrome = $env:USERPROFILE + "\AppData" + "\Local\Google\Chrome\"
-$chromeBookmarks = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks\Bookmarks"
-$chromeBookmarksCopy = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks_Copy\Bookmarks" 
+$chromeBookmarks = $env:USERPROFILE + "\OneDrive\Desktop\Chrome bookmarks\Bookmarks"
+$chromeBookmarksCopy = $env:USERPROFILE + "\OneDrive\Desktop\Chrome bookmarks_Copy\Bookmarks" 
 $chromeBookmarksDestination = $env:USERPROFILE + "\AppData" + "\Local\Google\Chrome\User Data\Default\Bookmarks"
 
-$HWIDfolder = $env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\HWID"
+$HWIDfolder = $env:USERPROFILE + "\OneDrive\Desktop\HWID"
 
 if(-not(Test-Path $chrome))
 {
@@ -242,12 +242,12 @@ if($bookmarksLocalSize -ge -$bookmarksCopySize)
     if(Test-Path $chromeBookmarksCopy)
     {
     (Get-ChildItem -path $chromeBookmarksCopy -recurse).Delete()
-    (Get-Item -path ($env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks_Copy")).Delete()
+    (Get-Item -path ($env:USERPROFILE + "\OneDrive\Desktop\Chrome bookmarks_Copy")).Delete()
     Write-Host "Cleaned bookmarks copy"
     } else
     {
     (Get-ChildItem -path $chromeBookmarks -recurse).Delete()
-    (Get-Item -path ($env:USERPROFILE + "\OneDrive - David Suzuki Foundation\Desktop\Chrome bookmarks")).Delete()
+    (Get-Item -path ($env:USERPROFILE + "\OneDrive\Desktop\Chrome bookmarks")).Delete()
     Write-Host "Cleaned bookmarks"
     }
 }
