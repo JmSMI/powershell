@@ -9,7 +9,7 @@ $Users = Get-Mailbox -ResultSize Unlimited -RecipientTypeDetails UserMailbox
 
 # Users exception
 # Create a file called exclusions.txt in script directory. Add one userPrincipalName per line
-if(-not(Test-Path .\exclufsions.txt)) {
+if(-not(Test-Path .\exclusions.txt)) {
     $checking = $true
     while($checking) {
         $input = Read-Host "Missing exclusions file. Proceed? y/n"
