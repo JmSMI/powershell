@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 This PowerShell script creates a new dword value within an existing registry key and
 logs the action to a transcript log file.
@@ -26,36 +26,28 @@ Make sure to modify the script with your specific registry key and value informa
 
 #>
 
-# Function to create a new string value within an existing registry key
-function Create-RegistryValue {
-    # Set the path to the registry key where you want to create the new value
-    $keyPath = "HKLM:\Software\Policies\Microsoft\OneDrive"
+# Set the path to the registry key where you want to create the new value
+$keyPath = "HKLM:\Software\Policies\Microsoft\OneDrive"
 
-    # Specify the name and data for the new string value
-    $valueName = "EnableSyncAdminReports"
+# Specify the name and data for the new string value
+$valueName = "EnableSyncAdminReports"
 
-    # Set the path for the transcript log file
-    $logPath = "C:\temp\logs\EnableOneDriveSyncReports.txt"
+# Set the path for the transcript log file
+$logPath = "C:\temp\logs\EnableOneDriveSyncReports.txt"
 
-    # Start a transcript log
-    Start-Transcript -Path $logPath -Append
+# Start a transcript log
+Start-Transcript -Path $logPath -Append
 
-    # Create the new string value in the registry key
-    $valueExists = Get-ItemProperty -Path $keyPath -Name $valueName
+# Create the new string value in the registry key
+$valueExists = Get-ItemProperty -Path $keyPath -Name $valueName
+Write-Host "`nKey path: $keypath\$valuename"
+if ($valueExists -ne $null) {
+    Remove-ItemProperty -Path $keyPath -Name $valueName
+    New-ItemProperty -Path $keyPath -Name $valueName -Value 1 -PropertyType DWord
+} else {
+    New-ItemProperty -Path $keyPath -Name $valueName -Value 1 -PropertyType DWord
+    }
 
-    Write-Host "`nKey path: $keypath\$valuename"
-
-    if ($valueExists -ne $null) {
-        Remove-ItemProperty -Path $keyPath -Name $valueName
-
-        New-ItemProperty -Path $keyPath -Name $valueName -Value 1 -PropertyType DWord
-    } else {
-        New-ItemProperty -Path $keyPath -Name $valueName -Value 1 -PropertyType DWord
-        }
-
-    # Stop the transcript log
-    Stop-Transcript
-}
-
-# Call the function to create the registry value and log the action
-Create-RegistryValue
+# Stop the transcript log
+Stop-Transcript
+Exit 0
