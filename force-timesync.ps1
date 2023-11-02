@@ -23,7 +23,7 @@ This command runs the script to force a time resynchronization and logs the outp
 #>
 
 # Define the log file path
-$logFilePath = "C:\temp\logs\dst.txt"
+$logFilePath = "C:\temp\logs\time_sync.txt"
 
 # Start a transcript to log the script's output
 Start-Transcript -Path $logFilePath
@@ -33,13 +33,13 @@ $exitCode = 0
 
 try {
     # Force NTP time synchronization
+    Write-Host "[Info]Stopping time service..."
+    Stop-Service -Name w32time
     Write-Host "[Info]Starting time service..."
     Start-Service -Name w32time
 
     Write-Host "[Info]w32tm resynchronization..."
     w32tm /resync
-    Write-Host "[Info]Restarting time service..."
-    Restart-Service -Name w32time
 } catch {
     # If an error occurs, log the error message
     Write-Host "[Error]: $_"
